@@ -61,6 +61,23 @@ O ProxMox é construído sobre o Debian Linux e usa KVM (Máquina Virtual Basead
 6. **Login e Configuração Inicial:**
    - Faça login com a conta root e senha configurada durante a instalação. A partir daqui, você pode começar a configurar o seu node ProxMox.
 
+   - Configurar sources list
+
+    ```
+    nano /etc/apt/sources.list.d/pve-enterprise.list
+    nano /etc/apt/sources.list
+
+    ```
+
+   - fazer growFS 
+
+    ```
+    lvremove /dev/pve/data
+    lvresize -l +100%FREE /dev/pve/root
+    resize2fs /dev/mapper/pve-root
+    xfs_growfs /dev/mapper/pve-root
+    ```
+
 ## Explorando Casos de Uso
 
 ### Visão Geral dos Casos de Uso
@@ -97,6 +114,7 @@ Agora que cobrimos os fundamentos, vamos mergulhar em uma demonstração ao vivo
 
 1. **Instalar o Pi-hole usando o Script do tteck:**
    - Passar pelo processo de instalação do Pi-hole em um contêiner LXC utilizando o script do tteck disponível em [https://tteck.github.io/Proxmox/](https://tteck.github.io/Proxmox/).
+    - Depois de instalar, precisa configurar corretamenta a sincronia/apontamento com o servidor DHCP, esse tutorial funciona: [How to configure Pfsense, to accept traffic from Pihole](https://coygeek.com/docs/pihole-pfsense/)
 
 2. **Instalar o Uptime Kuma:**
    - Demonstrar como configurar o Uptime Kuma em uma VM ou contêiner para observar a disponibilidade de serviços.
@@ -113,4 +131,4 @@ Obrigado mais uma vez por participar deste workshop, e estou ansioso para ver co
 
 ## Informações de Contato
 
-Se tiverem mais perguntas ou precisarem de mais assistência, sintam-se à vontade para entrar em contato comigo em [Suas Informações de Contato]. Boas virtualizações!
+Se tiverem mais perguntas ou precisarem de mais assistência, sintam-se à vontade para entrar em contato comigo no Discord. Boas virtualizações!
