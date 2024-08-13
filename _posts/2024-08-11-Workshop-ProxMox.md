@@ -17,6 +17,8 @@ Olá a todos, e bem-vindos a este primeiro workshop do kasTul em instalação e 
 
 Vamos começar passando pelo processo de instalação passo a passo e, em seguida, explorar alguns casos de uso práticos onde o ProxMox realmente se destaca. Seja para gerenciar um homelab, um ambiente de pequenas empresas ou até mesmo uma configuração mais extrema, o ProxMox é uma ferramenta versátil que pode atender às suas necessidades bitcoinheirescas.
 
+A versão da iso de instalação utilizada aqui foi a proxmox-ve_8.2-1.iso.
+
 ## O que é ProxMox?
 
 Antes de mergulharmos na instalação, vamos falar brevemente sobre o que é o ProxMox. O ProxMox Virtual Environment, ou ProxMox VE, é uma plataforma de virtualização de código aberto. Ele permite que você gerencie máquinas virtuais, contêineres e até mesmo funções de rede a partir de uma única interface web unificada.
@@ -26,7 +28,6 @@ O ProxMox é construído sobre o Debian Linux e usa KVM (Máquina Virtual Basead
 ## Instalação do ProxMox
 
 ### Requisitos de Instalação
-
 
 1. **Requisitos de Hardware:**
    - Processador de 64 bits com suporte a VT-x/AMD-V.
@@ -41,7 +42,6 @@ O ProxMox é construído sobre o Debian Linux e usa KVM (Máquina Virtual Basead
    - Uma conexão de rede estável para atualizações e gerenciamento.
 
 ### Instalação
-
 
 1. **Baixe a ISO do ProxMox VE:**
    - Visite o site oficial do ProxMox e baixe a imagem ISO mais recente.
@@ -60,16 +60,43 @@ O ProxMox é construído sobre o Debian Linux e usa KVM (Máquina Virtual Basead
 
 6. **Login e Configuração Inicial:**
    - Faça login com a conta root e senha configurada durante a instalação. A partir daqui, você pode começar a configurar o seu node ProxMox.
+   - IMPORTANTE ressaltar que esta modificação do tamanho e mapeamento de partições é para vc poder começar a usar o ProxMox em modo "noob"/"hobbista", pois a priori, o padrão seria estar utilizando-o em um servidor parrudo com diversos HDs/SSDs.
 
-   - Configurar sources list
+   - Configurar sources list para se livrar dos avisos da subscription enterprise.
+   - Comentar a única linha no arquivo:
 
+   ```bash
+   nano /etc/apt/sources.list.d/pve-enterprise.list
+   ```
+   ```bash
+   # deb https://enterprise.proxmox.com/debian/pve bookworm pve-enterprise
+   ```
+   {: file='/etc/apt/sources.list.d/pve-enterprise.list'}
+
+   - Como o arquivo `/etc/apt/sources.list` está funcionando aqui:
+
+   ```bash
+   deb http://ftp.br.debian.org/debian bookworm main contrib
+
+   deb http://ftp.br.debian.org/debian bookworm-updates main contrib
+
+   deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
+
+   # security updates
+   deb http://security.debian.org/debian-security bookworm-security main contrib
+   ```
+   {: file='/etc/apt/sources.list'}
+
+   - Comente a única linha em  `/etc/apt/sources.list.d/ceph.list`:
+
+    ```bash
+   # deb https://enterprise.proxmox.com/debian/ceph-quincy bookworm enterprise
     ```
-    nano /etc/apt/sources.list.d/pve-enterprise.list
-    nano /etc/apt/sources.list
+    {: file='/etc/apt/sources.list.d/ceph.list'}
 
-    ```
+   - Reparticionamento para liberar e habilitar utilização do espaço do drive de sistema:
 
-   - fazer growFS 
+   - Remova a partição local-lvm em Datacenter > Storage > local-lvm > Remove
 
     ```
     lvremove /dev/pve/data
@@ -77,6 +104,10 @@ O ProxMox é construído sobre o Debian Linux e usa KVM (Máquina Virtual Basead
     resize2fs /dev/mapper/pve-root
     xfs_growfs /dev/mapper/pve-root
     ```
+
+    Para poder utilizar esse espaço de forma completa, finalize editando as permissões em:
+
+    - Datacenter > Storage > local > Edit > Content: select all (Ctrl+click) > save
 
 ## Explorando Casos de Uso
 
